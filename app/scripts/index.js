@@ -24,13 +24,45 @@ Promise.all(dataset).then((data) => {
                     .append('g')
                     .attr('transform', 'translate(0, 0)');
 
-    // set up path
-    /*const projection = d3.geoMercator()  
-                         .translate([width, height])
-                         .scale(100);*/
-
+    // draw state and county lines using path
     const path = d3.geoPath();     
     const states = topojson.feature(data[1], data[1].objects.states).features;
+    const counties = topojson.feature(data[1], data[1].objects.counties).features;
+    const colors = [
+        [50, '#1B4E81'],
+        [35, '#FFE066'],
+        [20, '#A7C5E4'],
+        [10, '#FFB6BE'],
+        [0, '#D20F26']
+    ];
+
+    // create function to match data
+    function connectData(id, dataToRetrieve) {
+        let countyData = data[0].filter((data) => id === data.fips);
+        countyData = countyData[0].bachelorsOrHigher;
+
+        if(dataToRetrieve === 'percentage') {
+            return countyData;
+        } else if(dataToRetrieve === 'color') {
+            for(let i = 0; i < colors.length; i++) {
+                if(countyData >= colors[i][0]) {
+                    return colors[i][1];
+                }
+            }
+        } else {
+            return false;
+        }
+    }
+
+    svg.selectAll('path')
+       .data(counties)
+       .enter()
+       .append('path')
+       .attr('class', 'county')
+       .attr('d', path)
+       .attr('data-fips', (d) => d.id)
+       .attr('data-education', (d) => connectData(d.id, 'percentage'))
+       .style('fill', (d) => connectData(d.id, 'color'));    
     
     svg.selectAll('path')
        .data(states)
