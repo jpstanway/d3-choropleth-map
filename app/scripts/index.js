@@ -13,13 +13,14 @@ URLs.forEach((url) => {
 Promise.all(dataset).then((data) => {
 
     // declare dimensions
-    const width = 1000;
+    const width = 960;
     const height = 600;
 
     // create tooltip for individual counties
     const tip = d3.tip()
                   .attr('class', 'd3-tip')
                   .attr('id', 'tooltip')
+                  .direction('se')
                   .html((d) => {
                     const loc = connectData(d.id, 'location');
                     const rate = connectData(d.id, 'percentage');
@@ -28,7 +29,7 @@ Promise.all(dataset).then((data) => {
 
                     return `
                         <p>${loc}</p>
-                        <p>${rate}%</p>
+                        <p class="rate">${rate}%</p>
                     `;
                   });         
 
@@ -95,15 +96,15 @@ Promise.all(dataset).then((data) => {
        .enter()
        .append('path')
        .attr('class', 'states')
-       .attr('d', path);       
+       .attr('d', path);      
        
     // set up legend, scale and axis
-    const legendWidth = 80;
+    const legendWidth = 90;
     const padding = 60;
 
     const legend = d3.select('#legend')
                      .append('svg')
-                     .attr('width', legendWidth)
+                     .attr('width', legendWidth + 1)
                      .attr('height', height);
         
     const yScale = d3.scaleLinear()
@@ -112,6 +113,7 @@ Promise.all(dataset).then((data) => {
                      .nice();
 
     const yAxis = d3.axisLeft(yScale)
+                    .tickFormat((d) => `${d}%`)
                     .tickSize([66]);              
 
     // append axis to legend
@@ -133,9 +135,8 @@ Promise.all(dataset).then((data) => {
           .append('rect')
           .attr('class', 'legend-colors')
           .attr('width', 60)
-          .attr('height', 50)
-          .attr('x', 20)
+          .attr('height', 59)
+          .attr('x', 30)
           .attr('y', (d) => yScale(d[0]))
           .style('fill', (d) => d[1]);
-
 });

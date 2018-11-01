@@ -1,17 +1,41 @@
 @import url('//rawgithub.com/Caged/d3-tip/master/examples/example-styles.css');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700|Roboto+Slab:400,700');
+
+body {
+    font-family: 'Open Sans', 'Arial', sans-serif;
+}
 
 #main {
     text-align: center;
+    width: 1080px;
+}
+
+#title {
+    font-family: 'Roboto Slab', 'Georgia', serif;
 }
 
 #tooltip {
     text-align: center;
+    color: lighten(#000, 20%);
+    background: rgba(211, 169, 255, 0.8);
+
+    p {
+        margin: 0;
+    }
 }
 
 .county {
     border: 1px solid white;
+
+    &:hover {
+        opacity: 0.1;
+    }
 }
 
 .map {
     display: inline-block;
+}
+
+.rate {
+    font-size: 1.2em;
 }
