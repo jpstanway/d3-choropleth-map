@@ -13,7 +13,7 @@ URLs.forEach((url) => {
 Promise.all(dataset).then((data) => {
 
     // declare dimensions
-    const width = 1080;
+    const width = 1000;
     const height = 600;
 
     // create tooltip for individual counties
@@ -46,11 +46,14 @@ Promise.all(dataset).then((data) => {
     const states = topojson.feature(data[1], data[1].objects.states).features;
     const counties = topojson.feature(data[1], data[1].objects.counties).features;
     const colors = [
-        [50, '#1B4E81'],
-        [35, '#FFE066'],
-        [20, '#A7C5E4'],
-        [10, '#FFB6BE'],
-        [0, '#D20F26']
+        [70, '#070f00'],
+        [60, '#142700'],
+        [50, '#386f00'],
+        [40, '#5cb700'],
+        [30, '#87ff0d'],
+        [20, '#afff5b'],
+        [10, '#d5ffa9'],
+        [0, '#f4fee9']
     ];
 
     // create function to match data
@@ -92,5 +95,47 @@ Promise.all(dataset).then((data) => {
        .enter()
        .append('path')
        .attr('class', 'states')
-       .attr('d', path);         
+       .attr('d', path);       
+       
+    // set up legend, scale and axis
+    const legendWidth = 80;
+    const padding = 60;
+
+    const legend = d3.select('#legend')
+                     .append('svg')
+                     .attr('width', legendWidth)
+                     .attr('height', height);
+        
+    const yScale = d3.scaleLinear()
+                     .domain([d3.min(data[0], (d) => d.bachelorsOrHigher), d3.max(data[0], (d) => d.bachelorsOrHigher)])
+                     .range([padding, height - padding])
+                     .nice();
+
+    const yAxis = d3.axisLeft(yScale)
+                    .tickSize([66]);              
+
+    // append axis to legend
+    legend.append('g')
+          .attr('transform', `translate(${legendWidth}, 0)`)
+          .attr('id', 'legend-axis')
+          .call(yAxis)
+          .call(adjustTickPosition);
+
+    function adjustTickPosition(selection) {
+        selection.selectAll('.tick line')
+                 .attr('transform', `translate(0, -1)`);
+    }         
+
+    // append colored rects to legend
+    legend.selectAll('rect')
+          .data(colors)
+          .enter()
+          .append('rect')
+          .attr('class', 'legend-colors')
+          .attr('width', 60)
+          .attr('height', 50)
+          .attr('x', 20)
+          .attr('y', (d) => yScale(d[0]))
+          .style('fill', (d) => d[1]);
+
 });

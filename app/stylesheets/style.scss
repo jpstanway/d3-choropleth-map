@@ -1,6 +1,6 @@
 @import url('//rawgithub.com/Caged/d3-tip/master/examples/example-styles.css');
 
-#container {
+#main {
     text-align: center;
 }
 
@@ -10,4 +10,8 @@
 
 .county {
     border: 1px solid white;
+}
+
+.map {
+    display: inline-block;
 }
